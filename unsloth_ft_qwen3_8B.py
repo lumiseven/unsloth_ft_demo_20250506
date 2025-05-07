@@ -23,14 +23,6 @@ model, tokenizer = FastLanguageModel.from_pretrained(
     load_in_4bit=True
 )
 
-# 配置 LoRA
-# model = FastLanguageModel.get_peft_model(
-#     model,
-#     r=16,
-#     lora_alpha=32,
-#     lora_dropout=0.05,
-#     target_modules=["q_proj", "v_proj"]
-# )
 model = FastLanguageModel.get_peft_model(
     model,
     r = 32,           # Choose any number > 0! Suggested 8, 16, 32, 64, 128
