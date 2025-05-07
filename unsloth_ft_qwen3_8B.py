@@ -190,9 +190,24 @@ _ = model.generate(
 1. 使用Huggingface的`push_to_hub`进行在线保存
 2. 使用`save_pretrained`进行本地保存
 """
+# 定义保存路径，使用具有辨识度的文件夹名称
+import os
+from datetime import datetime
+
+# 创建一个具有高辨识度的文件夹名称，包含模型名称、微调方法、数据特点和日期
+save_dir_base = "/mnt/data1/D2/unsloth/"
+model_name = "Qwen3-8B-Unsloth-ReasonChat-" + datetime.now().strftime("%Y%m%d")
+lora_save_path = os.path.join(save_dir_base, model_name + "-LoRA")
+merged_save_path = os.path.join(save_dir_base, model_name + "-Merged")
+
+# 确保保存目录存在
+os.makedirs(lora_save_path, exist_ok=True)
+os.makedirs(merged_save_path, exist_ok=True)
+
 # 本地保存LoRA适配器
-model.save_pretrained("lora_model")  # 保存模型
-tokenizer.save_pretrained("lora_model")  # 保存分词器
+print(f"正在将LoRA模型保存到: {lora_save_path}")
+model.save_pretrained(lora_save_path)  # 保存模型
+tokenizer.save_pretrained(lora_save_path)  # 保存分词器
 
 # 在线保存（注释掉的代码）
 # model.push_to_hub("your_name/lora_model", token = "...") # 在线保存模型
@@ -204,4 +219,11 @@ tokenizer.save_pretrained("lora_model")  # 保存分词器
 将LoRA权重与原始模型合并，并以16位精度保存，便于部署和推理
 """
 # 保存合并后的16位精度模型
-model.save_pretrained_merged("model", tokenizer, save_method = "merged_16bit",)
+print(f"正在将合并后的模型保存到: {merged_save_path}")
+model.save_pretrained_merged(merged_save_path, tokenizer, save_method = "merged_16bit",)
+
+print(f"""
+模型保存完成！
+- LoRA适配器保存在: {lora_save_path}
+- 合并后的模型保存在: {merged_save_path}
+""")
